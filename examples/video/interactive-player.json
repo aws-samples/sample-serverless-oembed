@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "type": "video",
+  "title": "Product Demo: Next-Gen Smart Home Integration",
+  "author_name": "TechVision Studios",
+  "author_url": "https://mybusiness.com/creators/techvision-studios",
+  "provider_name": "Creative Studio Pro",
+  "provider_url": "https://mybusiness.com",
+  "cache_age": 1800,
+  "html": "<div class=\"creative-video-embed\" style=\"position: relative; width: 100%; height: 0; padding-bottom: 56.25%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1);\"><div style=\"position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;\"><iframe src=\"https://player.mybusiness.com/embed/smart-home-demo?autoplay=0&controls=1&branding=0&quality=hd\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" style=\"border-radius: 8px;\"></iframe></div><div style=\"position: absolute; bottom: 12px; left: 12px; right: 12px; background: rgba(0,0,0,0.8); color: white; padding: 8px 12px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; backdrop-filter: blur(10px);\"><div style=\"font-weight: 600; margin-bottom: 2px;\">Product Demo: Next-Gen Smart Home Integration</div><div style=\"opacity: 0.8; font-size: 12px;\">TechVision Studios • 4:32 • HD Quality</div></div></div>",
+  "width": 854,
+  "height": 480,
+  "thumbnail_url": "https://cdn.mybusiness.com/thumbnails/smart-home-demo-hd.jpg",
+  "thumbnail_width": 854,
+  "thumbnail_height": 480,
+  "duration": 272,
+  "video_info": {
+    "resolution": "1920x1080",
+    "format": "MP4",
+    "codec": "H.264",
+    "bitrate": "5000 kbps",
+    "framerate": "30 fps"
+  },
+  "chapters": [
+    { "time": 0, "title": "Introduction" },
+    { "time": 45, "title": "Voice Control Demo" },
+    { "time": 120, "title": "Mobile App Integration" },
+    { "time": 180, "title": "Security Features" },
+    { "time": 240, "title": "Installation Process" }
+  ],
+  "interactive_features": {
+    "annotations": true,
+    "chapters": true,
+    "quality_selector": true,
+    "playback_speed": true,
+    "fullscreen": true
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "type": "rich",
+  "title": "Code Playground: Interactive JavaScript Tutorial",
+  "author_name": "CodeLearn Academy",
+  "author_url": "https://mybusiness.com/academy/codelearn",
+  "provider_name": "Creative Studio Pro",
+  "provider_url": "https://mybusiness.com",
+  "cache_age": 1800,
+  "html": "<div class=\"code-playground\" style=\"width: 100%; max-width: 900px; margin: 0 auto; background: #1e1e1e; border-radius: 12px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;\"><div style=\"background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); padding: 16px 20px; color: white;\"><div style=\"display: flex; align-items: center; justify-content: space-between;\"><div><h3 style=\"margin: 0; font-size: 18px; font-weight: 600;\">🚀 Interactive JavaScript Tutorial</h3><p style=\"margin: 4px 0 0 0; opacity: 0.9; font-size: 14px;\">Learn by doing - edit and run code in real-time</p></div><div style=\"display: flex; gap: 8px;\"><div style=\"width: 12px; height: 12px; background: #ff5f57; border-radius: 50%;\"></div><div style=\"width: 12px; height: 12px; background: #ffbd2e; border-radius: 50%;\"></div><div style=\"width: 12px; height: 12px; background: #28ca42; border-radius: 50%;\"></div></div></div></div><div style=\"display: grid; grid-template-columns: 1fr 1fr; height: 400px;\"><div style=\"background: #2d2d2d; padding: 16px; border-right: 1px solid #404040;\"><div style=\"color: #61dafb; font-size: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;\">📝 Code Editor</div><div style=\"background: #1e1e1e; border-radius: 6px; padding: 12px; height: calc(100% - 40px); overflow-y: auto; font-size: 14px; line-height: 1.5;\"><div style=\"color: #c678dd;\">// Interactive Array Methods Tutorial</div><div style=\"color: #98c379;\">const</div> <div style=\"color: #e06c75;\">numbers</div> <div style=\"color: #56b6c2;\">=</div> <div style=\"color: #d19a66;\">[1, 2, 3, 4, 5]</div><div style=\"color: #abb2bf;\">;</div><br><div style=\"color: #c678dd;\">// Try editing this code!</div><div style=\"color: #98c379;\">const</div> <div style=\"color: #e06c75;\">doubled</div> <div style=\"color: #56b6c2;\">=</div> <div style=\"color: #e06c75;\">numbers</div><div style=\"color: #abb2bf;\">.</div><div style=\"color: #61dafb;\">map</div><div style=\"color: #abb2bf;\">(</div><div style=\"color: #e06c75;\">n</div> <div style=\"color: #c678dd;\">=></div> <div style=\"color: #e06c75;\">n</div> <div style=\"color: #56b6c2;\">*</div> <div style=\"color: #d19a66;\">2</div><div style=\"color: #abb2bf;\">);</div><br><div style=\"color: #61dafb;\">console</div><div style=\"color: #abb2bf;\">.</div><div style=\"color: #61dafb;\">log</div><div style=\"color: #abb2bf;\">(</div><div style=\"color: #e06c75;\">doubled</div><div style=\"color: #abb2bf;\">);</div></div></div><div style=\"background: #f8f8f2; padding: 16px;\"><div style=\"color: #333; font-size: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;\">📊 Output</div><div style=\"background: #272822; border-radius: 6px; padding: 12px; height: calc(100% - 40px); overflow-y: auto; font-size: 14px; line-height: 1.5; color: #f8f8f2;\"><div style=\"color: #66d9ef;\">></div> <div style=\"color: #a6e22e;\">[2, 4, 6, 8, 10]</div><br><div style=\"color: #75715e;\">// Click 'Run Code' to execute</div><div style=\"color: #75715e;\">// Try modifying the array or function!</div></div></div></div><div style=\"background: #2d2d2d; padding: 12px 20px; border-top: 1px solid #404040; display: flex; justify-content: space-between; align-items: center;\"><div style=\"display: flex; gap: 12px;\"><button style=\"background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 600;\">▶️ Run Code</button><button style=\"background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer;\">🔄 Reset</button><button style=\"background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer;\">💾 Save</button></div><div style=\"color: #abb2bf; font-size: 12px;\">💡 Lesson 3 of 12: Array Methods</div></div></div>",
+  "width": 900,
+  "height": 500,
+  "thumbnail_url": "https://cdn.mybusiness.com/tutorials/js-playground-thumb.jpg",
+  "thumbnail_width": 900,
+  "thumbnail_height": 500,
+  "application_info": {
+    "type": "code_playground",
+    "language": "javascript",
+    "framework": "vanilla",
+    "features": [
+      "live_editing",
+      "syntax_highlighting",
+      "auto_completion",
+      "error_detection"
+    ],
+    "lesson_progress": {
+      "current": 3,
+      "total": 12,
+      "completion_rate": "25%"
+    }
+  },
+  "educational_content": {
+    "difficulty": "beginner",
+    "estimated_time": "15 minutes",
+    "learning_objectives": [
+      "Understand array map() method",
+      "Practice functional programming concepts",
+      "Learn to debug JavaScript code"
+    ]
+  }
+}

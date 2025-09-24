@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "type": "rich",
+  "title": "Interactive Data Visualization: Global Climate Trends",
+  "author_name": "DataViz Labs",
+  "author_url": "https://mybusiness.com/labs/dataviz",
+  "provider_name": "Creative Studio Pro",
+  "provider_url": "https://mybusiness.com",
+  "cache_age": 3600,
+  "html": "<div class=\"interactive-widget\" style=\"width: 100%; max-width: 800px; margin: 0 auto; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\"><div style=\"text-align: center; margin-bottom: 20px;\"><h3 style=\"margin: 0 0 8px 0; color: #2c3e50; font-size: 24px; font-weight: 700;\">🌍 Global Climate Trends</h3><p style=\"margin: 0; color: #7f8c8d; font-size: 16px;\">Interactive visualization of temperature changes over time</p></div><div style=\"background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);\"><div id=\"climate-chart\" style=\"height: 300px; background: linear-gradient(45deg, #3498db, #2ecc71); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: 600;\">📊 Interactive Chart Loading...</div></div><div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px;\"><div style=\"background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);\"><div style=\"font-size: 28px; font-weight: 700; color: #e74c3c; margin-bottom: 4px;\">+1.2°C</div><div style=\"font-size: 12px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px;\">Avg Increase</div></div><div style=\"background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);\"><div style=\"font-size: 28px; font-weight: 700; color: #3498db; margin-bottom: 4px;\">195</div><div style=\"font-size: 12px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px;\">Countries</div></div><div style=\"background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);\"><div style=\"font-size: 28px; font-weight: 700; color: #2ecc71; margin-bottom: 4px;\">50yr</div><div style=\"font-size: 12px; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px;\">Data Range</div></div></div><div style=\"display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;\"><button style=\"background: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s ease;\">🌡️ Temperature</button><button style=\"background: #95a5a6; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s ease;\">🌧️ Precipitation</button><button style=\"background: #95a5a6; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.3s ease;\">❄️ Ice Coverage</button></div><div style=\"text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #ecf0f1;\"><a href=\"https://mybusiness.com/widgets/climate-trends\" style=\"color: #3498db; text-decoration: none; font-weight: 600; font-size: 14px;\">View Full Interactive Dashboard →</a></div></div>",
+  "width": 800,
+  "height": 500,
+  "thumbnail_url": "https://cdn.mybusiness.com/widgets/climate-trends-preview.jpg",
+  "thumbnail_width": 800,
+  "thumbnail_height": 500,
+  "widget_info": {
+    "type": "data_visualization",
+    "interactive": true,
+    "data_source": "Global Climate Database",
+    "update_frequency": "daily",
+    "supported_interactions": ["zoom", "filter", "export", "share"]
+  },
+  "features": [
+    "Real-time data updates",
+    "Interactive time range selection",
+    "Multiple visualization types",
+    "Export to PNG/SVG",
+    "Responsive design",
+    "Accessibility compliant"
+  ]
+}

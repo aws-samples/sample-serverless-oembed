@@ -1,0 +1,701 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Serverless oEmbed Provider - Production-ready oEmbed endpoint with custom domain support
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Tracing: Active
+    Runtime: nodejs20.x
+    Architectures:
+      - arm64
+    MemorySize: 128
+    Timeout: 5
+    Tags:
+      Project: "serverless-oembed-provider"
+      Environment: !Ref Environment
+  Api:
+    TracingEnabled: true
+    EndpointConfiguration:
+      Type: EDGE
+    Cors:
+      AllowMethods: "'GET,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowOrigin: "'*'"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: Deployment environment (dev, stage, prod)
+    AllowedValues:
+      - dev
+      - stage
+      - prod
+    Default: dev
+  ProviderName:
+    Type: String
+    Description: The name of your business as oEmbed provider
+    MinLength: "1"
+    MaxLength: "100"
+  ProviderUrl:
+    Type: String
+    Description: The URL of your main website
+    AllowedPattern: "^https?://[a-zA-Z0-9\\-]+(?:\\.[a-zA-Z0-9\\-]+)*(?:/[a-zA-Z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]*)?$"
+  ProviderDomain:
+    Type: String
+    Description: The domain of your main site (for URL validation)
+    AllowedPattern: "^[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?)*\\.[a-zA-Z]{2,6}$"
+  CertificateArn:
+    Type: String
+    Description: ACM Certificate ARN for custom domain SSL (optional, leave empty to use default API Gateway domain)
+    Default: ""
+  AlarmNotificationEmail:
+    Type: String
+    Description: Email address for alarm notifications (optional, leave empty to disable notifications)
+    AllowedPattern: "^$|^[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]{1,253}\\.[a-zA-Z]{2,6}$"
+    Default: ""
+  ErrorRateThreshold:
+    Type: Number
+    Description: Lambda error rate threshold (percentage)
+    Default: 1.0
+    MinValue: 0.1
+    MaxValue: 10.0
+  LatencyThreshold:
+    Type: Number
+    Description: API Gateway latency threshold in milliseconds
+    Default: 2000
+    MinValue: 500
+    MaxValue: 10000
+
+Mappings:
+  EnvironmentMap:
+    dev:
+      LogRetentionDays: 7
+      ReservedConcurrency: 5
+      ApiGatewayLogRetentionDays: 14
+      ErrorRateEvaluationPeriods: 3
+      LatencyEvaluationPeriods: 3
+    stage:
+      LogRetentionDays: 14
+      ReservedConcurrency: 10
+      ApiGatewayLogRetentionDays: 30
+      ErrorRateEvaluationPeriods: 2
+      LatencyEvaluationPeriods: 2
+    prod:
+      LogRetentionDays: 30
+      ReservedConcurrency: 50
+      ApiGatewayLogRetentionDays: 90
+      ErrorRateEvaluationPeriods: 2
+      LatencyEvaluationPeriods: 2
+
+Conditions:
+  HasCertificate: !Not [!Equals [!Ref CertificateArn, ""]]
+  HasAlarmNotification: !Not [!Equals [!Ref AlarmNotificationEmail, ""]]
+
+Resources:
+  # Lambda function CloudWatch Log Group with environment-specific retention
+  LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: !FindInMap [EnvironmentMap, !Ref Environment, LogRetentionDays]
+
+  # IAM Execution Role for Lambda with X-Ray and CloudWatch permissions
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+      Policies:
+        - PolicyName: CloudWatchLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "${LambdaLogGroup.Arn}:*"
+
+
+  # CloudWatch Log Group for API Gateway Access Logs
+  ApiGatewayAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: !FindInMap [EnvironmentMap, !Ref Environment, ApiGatewayLogRetentionDays]
+
+
+  # IAM Role for API Gateway CloudWatch Logs
+  ApiGatewayCloudWatchLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+      Policies:
+        - PolicyName: CloudWatchLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                  - logs:PutLogEvents
+                  - logs:GetLogEvents
+                  - logs:FilterLogEvents
+                Resource: !Sub "${ApiGatewayAccessLogGroup.Arn}:*"
+
+  # API Gateway Account Configuration
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayCloudWatchLogsRole.Arn
+
+  # API Gateway with EDGE optimization and caching
+  #checkov:skip=CKV_AWS_120: Ensure API Gateway caching is enabled
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Description: Serverless oEmbed Provider - Production-ready oEmbed endpoint with caching
+      StageName: !Ref Environment
+      EndpointConfiguration:
+        Type: EDGE
+      TracingEnabled: true
+
+      # API Gateway Caching Configuration (disabled by default for cost optimization)
+      # To enable caching for better performance, uncomment the following lines:
+      # CacheClusterEnabled: true
+      # CacheClusterSize: "0.5"
+      # MethodSettings:
+      #   - ResourcePath: "/oembed"
+      #     HttpMethod: "GET"
+      #     CachingEnabled: true
+      #     CacheTtlInSeconds: 300
+
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          LoggingLevel: INFO
+          DataTraceEnabled: true
+          MetricsEnabled: true
+
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiGatewayAccessLogGroup.Arn
+        Format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","caller":"$context.identity.caller","user":"$context.identity.user","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}'
+
+      Cors:
+        AllowMethods: "'GET,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        MaxAge: "'600'"
+
+  # API Gateway Response Templates with Security Headers
+  GatewayResponseDefault4XX:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref ApiGatewayApi
+      ResponseType: DEFAULT_4XX
+      ResponseParameters:
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+        gatewayresponse.header.X-Frame-Options: "'DENY'"
+        gatewayresponse.header.X-XSS-Protection: "'1; mode=block'"
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
+        gatewayresponse.header.Content-Security-Policy: "'default-src 'self'"
+        gatewayresponse.header.Referrer-Policy: "'strict-origin-when-cross-origin'"
+      ResponseTemplates:
+        application/json: '{"error":"Bad Request","message":"The request could not be processed. Please check your parameters.","timestamp":"$context.requestTime","requestId":"$context.requestId"}'
+
+  GatewayResponseDefault5XX:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref ApiGatewayApi
+      ResponseType: DEFAULT_5XX
+      ResponseParameters:
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+        gatewayresponse.header.X-Frame-Options: "'DENY'"
+        gatewayresponse.header.X-XSS-Protection: "'1; mode=block'"
+        gatewayresponse.header.Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
+        gatewayresponse.header.Content-Security-Policy: "'default-src 'self'"
+        gatewayresponse.header.Referrer-Policy: "'strict-origin-when-cross-origin'"
+      ResponseTemplates:
+        application/json: '{"error":"Internal Server Error","message":"An internal error occurred. Please try again later.","timestamp":"$context.requestTime","requestId":"$context.requestId"}'
+
+  GatewayResponseAccessDenied:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref ApiGatewayApi
+      ResponseType: ACCESS_DENIED
+      ResponseParameters:
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+        gatewayresponse.header.X-Frame-Options: "'DENY'"
+        gatewayresponse.header.X-XSS-Protection: "'1; mode=block'"
+      ResponseTemplates:
+        application/json: '{"error":"Access Denied","message":"You do not have permission to access this resource.","timestamp":"$context.requestTime","requestId":"$context.requestId"}'
+
+  GatewayResponseThrottled:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref ApiGatewayApi
+      ResponseType: THROTTLED
+      ResponseParameters:
+        gatewayresponse.header.X-Content-Type-Options: "'nosniff'"
+        gatewayresponse.header.X-Frame-Options: "'DENY'"
+        gatewayresponse.header.X-XSS-Protection: "'1; mode=block'"
+        gatewayresponse.header.Retry-After: "'60'"
+      ResponseTemplates:
+        application/json: '{"error":"Too Many Requests","message":"Request rate limit exceeded. Please try again later.","timestamp":"$context.requestTime","requestId":"$context.requestId","retryAfter":"60 seconds"}'
+
+  # Custom Domain (conditional)
+  ApiGatewayDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Condition: HasCertificate
+    Properties:
+      DomainName: !Sub "oembed.${ProviderDomain}"
+      CertificateArn: !Ref CertificateArn
+      SecurityPolicy: TLS_1_2
+      EndpointConfiguration:
+        Types:
+          - EDGE
+
+  # Base Path Mapping (conditional)
+  ApiGatewayBasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Condition: HasCertificate
+    Properties:
+      DomainName: !Ref ApiGatewayDomainName
+      RestApiId: !Ref ApiGatewayApi
+      Stage: !Ref Environment
+
+
+
+  # Lambda function with ARM64 Graviton architecture and optimized settings
+  oembedFunction:
+    Type: AWS::Serverless::Function
+    DependsOn: LambdaLogGroup
+    Properties:
+
+      Handler: src/handlers/oembed.handler
+      Description: "Serverless oEmbed Provider - Production-ready oEmbed endpoint"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      ReservedConcurrentExecutions: !FindInMap [EnvironmentMap, !Ref Environment, ReservedConcurrency]
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref Environment
+          PROVIDER_NAME: !Ref ProviderName
+          PROVIDER_URL: !Ref ProviderUrl
+          PROVIDER_DOMAIN: !Ref ProviderDomain
+      Events:
+        OembedApi:
+          Type: Api
+          Properties:
+            Path: /oembed
+            Method: GET
+            RestApiId: !Ref ApiGatewayApi
+            RequestParameters:
+              - method.request.querystring.url: 
+                  Required: true
+              - method.request.querystring.maxwidth: 
+                  Required: false
+              - method.request.querystring.maxheight: 
+                  Required: false
+              - method.request.querystring.format: 
+                  Required: false
+        OembedOptionsApi:
+          Type: Api
+          Properties:
+            Path: /oembed
+            Method: OPTIONS
+            RestApiId: !Ref ApiGatewayApi
+
+  # SNS Topic for Alarm Notifications
+  AlarmNotificationTopic:
+    Type: AWS::SNS::Topic
+    Condition: HasAlarmNotification
+    Properties:
+      DisplayName: !Sub "${AWS::StackName} oEmbed Provider Alarms"
+
+  AlarmNotificationSubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasAlarmNotification
+    Properties:
+      TopicArn: !Ref AlarmNotificationTopic
+      Protocol: email
+      Endpoint: !Ref AlarmNotificationEmail
+
+  # Application monitoring and resource organization
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name: !Sub "${AWS::StackName}-oembed-resources"
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName: !Ref ApplicationResourceGroup
+      AutoConfigurationEnabled: true
+    DependsOn: ApplicationResourceGroup
+
+  # CloudWatch Dashboard for comprehensive monitoring
+  OembedDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/Lambda", "Invocations", "FunctionName", "${oembedFunction}" ],
+                  [ ".", "Errors", ".", "." ],
+                  [ ".", "Duration", ".", "." ],
+                  [ ".", "Throttles", ".", "." ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${AWS::Region}",
+                "title": "Lambda Function Metrics",
+                "period": 300,
+                "stat": "Sum"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/ApiGateway", "Count", "ApiName", "${ApiGatewayApi}", "Stage", "${Environment}" ],
+                  [ ".", "4XXError", ".", ".", ".", "." ],
+                  [ ".", "5XXError", ".", ".", ".", "." ],
+                  [ ".", "Latency", ".", ".", ".", "." ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${AWS::Region}",
+                "title": "API Gateway Metrics",
+                "period": 300,
+                "stat": "Sum"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 6,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/Lambda", "Duration", "FunctionName", "${oembedFunction}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${AWS::Region}",
+                "title": "Lambda Duration",
+                "period": 300,
+                "stat": "Average",
+                "yAxis": {
+                  "left": {
+                    "min": 0
+                  }
+                }
+              }
+            },
+            {
+              "type": "metric",
+              "x": 8,
+              "y": 6,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/Lambda", "ConcurrentExecutions", "FunctionName", "${oembedFunction}" ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${AWS::Region}",
+                "title": "Lambda Concurrent Executions",
+                "period": 300,
+                "stat": "Maximum"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 16,
+              "y": 6,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/ApiGateway", "Count", "ApiName", "${ApiGatewayApi}", "Stage", "${Environment}" ],
+                  [ ".", "Latency", ".", ".", ".", "." ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${AWS::Region}",
+                "title": "API Gateway Request Volume & Latency",
+                "period": 300,
+                "stat": "Average"
+              }
+            },
+            {
+              "type": "log",
+              "x": 0,
+              "y": 12,
+              "width": 24,
+              "height": 6,
+              "properties": {
+                "query": "SOURCE '/aws/lambda/${oembedFunction}' | fields @timestamp, level, event, message, correlationId | filter level = \"ERROR\" | sort @timestamp desc | limit 100",
+                "region": "${AWS::Region}",
+                "title": "Recent Error Logs",
+                "view": "table"
+              }
+            }
+          ]
+        }
+
+  # CloudWatch Alarms for critical monitoring
+  LambdaErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+
+      AlarmDescription: !Sub "Lambda function ${oembedFunction} error rate is too high"
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: !FindInMap [EnvironmentMap, !Ref Environment, ErrorRateEvaluationPeriods]
+      Threshold: !Ref ErrorRateThreshold
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref oembedFunction
+      TreatMissingData: notBreaching
+      AlarmActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+      OKActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+
+  LambdaDurationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+
+      AlarmDescription: !Sub "Lambda function ${oembedFunction} duration is too high"
+      MetricName: Duration
+      Namespace: AWS/Lambda
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: !FindInMap [EnvironmentMap, !Ref Environment, LatencyEvaluationPeriods]
+      Threshold: 4000
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref oembedFunction
+      TreatMissingData: notBreaching
+      AlarmActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+      OKActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+
+  LambdaThrottleAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+
+      AlarmDescription: !Sub "Lambda function ${oembedFunction} is being throttled"
+      MetricName: Throttles
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref oembedFunction
+      TreatMissingData: notBreaching
+      AlarmActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+      OKActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+
+  ApiGateway4XXAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: !Sub "API Gateway ${ApiGatewayApi} 4XX error rate is too high"
+      MetricName: 4XXError
+      Namespace: AWS/ApiGateway
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: !FindInMap [EnvironmentMap, !Ref Environment, ErrorRateEvaluationPeriods]
+      Threshold: 20
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Ref ApiGatewayApi
+        - Name: Stage
+          Value: !Ref Environment
+      TreatMissingData: notBreaching
+      AlarmActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+      OKActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+
+  ApiGateway5XXAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: !Sub "API Gateway ${ApiGatewayApi} 5XX error rate is too high"
+      MetricName: 5XXError
+      Namespace: AWS/ApiGateway
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 3
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Ref ApiGatewayApi
+        - Name: Stage
+          Value: !Ref Environment
+      TreatMissingData: notBreaching
+      AlarmActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+      OKActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+
+  ApiGatewayLatencyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: !Sub "API Gateway ${ApiGatewayApi} latency is too high"
+      MetricName: Latency
+      Namespace: AWS/ApiGateway
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: !FindInMap [EnvironmentMap, !Ref Environment, LatencyEvaluationPeriods]
+      Threshold: !Ref LatencyThreshold
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Ref ApiGatewayApi
+        - Name: Stage
+          Value: !Ref Environment
+      TreatMissingData: notBreaching
+      AlarmActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+      OKActions: !If
+        - HasAlarmNotification
+        - [!Ref AlarmNotificationTopic]
+        - []
+
+Outputs:
+  # Default API Gateway endpoint
+  ApiGatewayEndpoint:
+    Description: "Default API Gateway endpoint URL for oEmbed requests"
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/oembed"
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiGatewayEndpoint"
+
+  # Custom domain endpoint (if configured)
+  CustomDomainEndpoint:
+    Condition: HasCertificate
+    Description: "Custom domain endpoint URL for oEmbed requests"
+    Value: !Sub "https://oembed.${ProviderDomain}/oembed"
+    Export:
+      Name: !Sub "${AWS::StackName}-CustomDomainEndpoint"
+
+  # Lambda function ARN
+  OembedFunctionArn:
+    Description: "oEmbed Lambda Function ARN"
+    Value: !GetAtt oembedFunction.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-OembedFunctionArn"
+
+  # API Gateway ID
+  ApiGatewayId:
+    Description: "API Gateway ID"
+    Value: !Ref ApiGatewayApi
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiGatewayId"
+
+  # Environment information
+  DeploymentEnvironment:
+    Description: "Deployment environment"
+    Value: !Ref Environment
+    Export:
+      Name: !Sub "${AWS::StackName}-Environment"
+
+  # Monitoring and observability outputs
+  CloudWatchDashboardUrl:
+    Description: "CloudWatch Dashboard URL for monitoring"
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#dashboards:name=${OembedDashboard}"
+    Export:
+      Name: !Sub "${AWS::StackName}-DashboardUrl"
+
+  ApplicationInsightsUrl:
+    Description: "Application Insights URL for detailed monitoring"
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/systems-manager/appinsights/application/${ApplicationInsightsMonitoring}"
+    Export:
+      Name: !Sub "${AWS::StackName}-AppInsightsUrl"
+
+  # Alarm notification outputs
+  AlarmNotificationTopic:
+    Condition: HasAlarmNotification
+    Description: "SNS Topic ARN for alarm notifications"
+    Value: !Ref AlarmNotificationTopic
+    Export:
+      Name: !Sub "${AWS::StackName}-AlarmTopic"
+
+  AlarmNotificationEmail:
+    Condition: HasAlarmNotification
+    Description: "Email address configured for alarm notifications"
+    Value: !Ref AlarmNotificationEmail
+    Export:
+      Name: !Sub "${AWS::StackName}-AlarmEmail"

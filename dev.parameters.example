@@ -1,0 +1,34 @@
+# Serverless oEmbed Provider - Deployment Parameters
+# Copy this file to dev.parameters, staging.parameters, or prod.parameters
+# and customize the values for your deployment
+
+# Deployment environment (dev, stage, prod)
+Environment=dev
+
+# Your business/organization name (appears in oEmbed responses)
+ProviderName="MyCompany"
+
+# Your main website URL (appears in oEmbed responses)
+ProviderUrl="https://mycompany.com"
+
+# Your domain for URL validation (content URLs must match this domain)
+ProviderDomain="mycompany.com"
+
+# Your notification email where you'll receive alerts. 
+# Leave empty to disable notifications
+AlarmNotificationEmail="oembed@mycompany.com"
+
+# Optional: ACM Certificate ARN for custom domain SSL
+# If provided, automatically creates custom domain at oembed.{ProviderDomain}
+# If empty, uses default API Gateway domain (no custom domain)
+# Example: arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012
+CertificateArn=""
+
+# Example with custom domain:
+# CertificateArn="arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+# This will create: https://oembed.mycompany.com/oembed
+# Without certificate: uses default API Gateway URL
+
+# Usage:
+# Use the helper script (recommended): ./deploy.sh dev --guided
+# The script automatically handles parameter formatting and quoted values

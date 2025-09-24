@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "type": "video",
+  "title": "🔴 LIVE: Weekly Tech Talk - AI in Modern Development",
+  "author_name": "DevStream Network",
+  "author_url": "https://mybusiness.com/channels/devstream-network",
+  "provider_name": "Creative Studio Pro",
+  "provider_url": "https://mybusiness.com",
+  "cache_age": 60,
+  "html": "<div class=\"live-stream-embed\" style=\"position: relative; width: 100%; height: 0; padding-bottom: 56.25%; background: #000; border-radius: 8px; overflow: hidden; border: 2px solid #ff4757;\"><div style=\"position: absolute; top: 8px; left: 8px; background: #ff4757; color: white; padding: 4px 8px; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 600; animation: pulse 2s infinite;\">🔴 LIVE</div><iframe src=\"https://stream.mybusiness.com/embed/weekly-tech-talk?live=1&chat=1&quality=auto\" width=\"100%\" height=\"100%\" frameborder=\"0\" allowfullscreen allow=\"camera; microphone; autoplay\" style=\"position: absolute; top: 0; left: 0;\"></iframe><div style=\"position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px 12px 12px; color: white;\"><div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\"><div style=\"font-weight: 600; font-size: 16px; margin-bottom: 4px;\">Weekly Tech Talk - AI in Modern Development</div><div style=\"opacity: 0.9; font-size: 14px; margin-bottom: 6px;\">DevStream Network</div><div style=\"display: flex; align-items: center; font-size: 12px; opacity: 0.8;\"><span style=\"margin-right: 12px;\">👥 1,247 watching</span><span style=\"margin-right: 12px;\">⏱️ Started 23 min ago</span><span>💬 Chat enabled</span></div></div></div></div><style>@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }</style>",
+  "width": 1280,
+  "height": 720,
+  "thumbnail_url": "https://cdn.mybusiness.com/live/weekly-tech-talk-thumb.jpg",
+  "thumbnail_width": 1280,
+  "thumbnail_height": 720,
+  "live_status": {
+    "is_live": true,
+    "started_at": "2024-01-15T19:00:00Z",
+    "viewers": 1247,
+    "chat_enabled": true,
+    "quality": "1080p60"
+  },
+  "stream_info": {
+    "resolution": "1920x1080",
+    "framerate": "60 fps",
+    "bitrate": "6000 kbps",
+    "latency": "low"
+  },
+  "upcoming_schedule": [
+    {
+      "date": "2024-01-22T19:00:00Z",
+      "topic": "Microservices Architecture Patterns"
+    },
+    {
+      "date": "2024-01-29T19:00:00Z",
+      "topic": "Database Optimization Techniques"
+    },
+    { "date": "2024-02-05T19:00:00Z", "topic": "Cloud Security Best Practices" }
+  ]
+}

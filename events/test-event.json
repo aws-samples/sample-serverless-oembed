@@ -1,0 +1,42 @@
+{
+  "resource": "/oembed",
+  "path": "/oembed",
+  "httpMethod": "GET",
+  "queryStringParameters": {
+    "url": "https://mybusiness.com/video/123",
+    "maxwidth": "800",
+    "maxheight": "600"
+  },
+  "multiValueQueryStringParameters": {
+    "url": ["https://mybusiness.com/video/123"],
+    "maxwidth": ["800"],
+    "maxheight": ["600"]
+  },
+  "headers": {
+    "Accept": "*/*",
+    "Host": "api.example.com",
+    "User-Agent": "Custom/1.0"
+  },
+  "multiValueHeaders": {
+    "Accept": ["*/*"],
+    "Host": ["api.example.com"],
+    "User-Agent": ["Custom/1.0"]
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "api-id",
+    "domainName": "api.example.com",
+    "domainPrefix": "api",
+    "httpMethod": "GET",
+    "path": "/oembed",
+    "protocol": "HTTP/1.1",
+    "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
+    "requestTime": "09/Apr/2015:12:34:56 +0000",
+    "requestTimeEpoch": 1428582896000,
+    "stage": "prod"
+  },
+  "pathParameters": null,
+  "stageVariables": null,
+  "body": null,
+  "isBase64Encoded": false
+}

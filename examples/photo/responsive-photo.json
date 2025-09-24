@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "type": "photo",
+  "title": "Urban Architecture: Modern Glass Facade",
+  "author_name": "Marcus Rodriguez",
+  "author_url": "https://mybusiness.com/photographers/marcus-rodriguez",
+  "provider_name": "Creative Studio Pro",
+  "provider_url": "https://mybusiness.com",
+  "cache_age": 7200,
+  "url": "https://cdn.mybusiness.com/images/urban-architecture-glass.jpg",
+  "width": 2048,
+  "height": 1365,
+  "thumbnail_url": "https://cdn.mybusiness.com/thumbnails/urban-architecture-thumb.jpg",
+  "thumbnail_width": 300,
+  "thumbnail_height": 200,
+  "description": "Contemporary architectural photography showcasing the interplay of light and shadow on modern glass surfaces in downtown metropolitan area.",
+  "style": "architectural",
+  "color_palette": ["#2C3E50", "#3498DB", "#ECF0F1", "#95A5A6"],
+  "responsive_images": {
+    "srcset": "https://cdn.mybusiness.com/images/urban-architecture-400.jpg 400w, https://cdn.mybusiness.com/images/urban-architecture-800.jpg 800w, https://cdn.mybusiness.com/images/urban-architecture-1200.jpg 1200w, https://cdn.mybusiness.com/images/urban-architecture-2048.jpg 2048w",
+    "sizes": "(max-width: 400px) 100vw, (max-width: 800px) 50vw, (max-width: 1200px) 33vw, 25vw"
+  },
+  "metadata": {
+    "captured_date": "2024-03-15T14:30:00Z",
+    "equipment": "Sony α7R IV with FE 16-35mm f/2.8 GM",
+    "technique": "HDR composite, 3 exposures",
+    "post_processing": "Adobe Lightroom CC"
+  }
+}

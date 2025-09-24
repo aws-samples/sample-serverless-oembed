@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "type": "photo",
+  "title": "Sunset Over Mountain Lake - Professional Photography Collection",
+  "author_name": "Alexandra Chen",
+  "author_url": "https://mybusiness.com/photographers/alexandra-chen",
+  "provider_name": "Creative Studio Pro",
+  "provider_url": "https://mybusiness.com",
+  "cache_age": 3600,
+  "url": "https://cdn.mybusiness.com/images/sunset-mountain-lake-4k.jpg",
+  "width": 3840,
+  "height": 2160,
+  "thumbnail_url": "https://cdn.mybusiness.com/thumbnails/sunset-mountain-lake-thumb.jpg",
+  "thumbnail_width": 400,
+  "thumbnail_height": 225,
+  "description": "A breathtaking 4K capture of golden hour light reflecting off pristine mountain lake waters, showcasing the serene beauty of untouched wilderness.",
+  "tags": [
+    "landscape",
+    "nature",
+    "sunset",
+    "mountains",
+    "lake",
+    "4k",
+    "professional"
+  ],
+  "camera_info": {
+    "camera": "Canon EOS R5",
+    "lens": "RF 24-70mm f/2.8L IS USM",
+    "settings": "f/8, 1/125s, ISO 100"
+  },
+  "location": "Banff National Park, Alberta, Canada",
+  "license": "Creative Commons Attribution 4.0",
+  "download_sizes": [
+    {
+      "size": "4K",
+      "width": 3840,
+      "height": 2160,
+      "url": "https://cdn.mybusiness.com/images/sunset-mountain-lake-4k.jpg"
+    },
+    {
+      "size": "2K",
+      "width": 2560,
+      "height": 1440,
+      "url": "https://cdn.mybusiness.com/images/sunset-mountain-lake-2k.jpg"
+    },
+    {
+      "size": "HD",
+      "width": 1920,
+      "height": 1080,
+      "url": "https://cdn.mybusiness.com/images/sunset-mountain-lake-hd.jpg"
+    },
+    {
+      "size": "Mobile",
+      "width": 800,
+      "height": 450,
+      "url": "https://cdn.mybusiness.com/images/sunset-mountain-lake-mobile.jpg"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+version = 0.1
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.sync.parameters]
+watch = true
+
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "serverless-oembed"
+resolve_s3 = true
+s3_prefix = "serverless-oembed"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"dev\" ProviderName=\"MyTestCompany\" ProviderUrl=\"https://mytestcompany.com\" ProviderDomain=\"mytestcompany.com\" CertificateArn=\"\""
+image_repositories = []
+
+# Add more environments

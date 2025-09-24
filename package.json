@@ -1,0 +1,58 @@
+{
+  "name": "serverless-oembed-provider",
+  "description": "Production-ready serverless oEmbed provider that implements the complete oEmbed 1.0 specification with custom domain support, monitoring, and security best practices",
+  "version": "1.0.0",
+  "private": false,
+  "keywords": [
+    "oembed",
+    "serverless",
+    "aws",
+    "lambda",
+    "api-gateway",
+    "social-media",
+    "content-preview",
+    "sam",
+    "nodejs"
+  ],
+  "author": "AWS Community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aws-samples/serverless-oembed-provider.git"
+  },
+  "homepage": "https://github.com/aws-samples/serverless-oembed-provider",
+  "bugs": {
+    "url": "https://github.com/aws-samples/serverless-oembed-provider/issues"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.859.0",
+    "@aws-sdk/lib-dynamodb": "^3.859.0",
+    "aws-xray-sdk-core": "^3.10.3"
+  },
+  "devDependencies": {
+    "aws-sdk-client-mock": "^4.1.0",
+    "esbuild": "^0.25.8",
+    "jest": "^30.0.5",
+    "terser": "^5.43.1"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "build": "npm run build:esbuild && npm run build:optimize",
+    "build:esbuild": "esbuild src/handlers/oembed.mjs --bundle --platform=node --target=node20 --format=esm --outfile=dist/oembed.mjs --external:@aws-sdk/* --tree-shaking=true",
+    "build:optimize": "terser dist/oembed.mjs --compress --mangle --output dist/oembed.min.mjs",
+    "build:analyze": "esbuild src/handlers/oembed.mjs --bundle --platform=node --target=node20 --format=esm --analyze --external:@aws-sdk/*",
+    "prebuild": "mkdir -p dist"
+  },
+  "jest": {
+    "testMatch": [
+      "**/__tests__/**/*.[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)",
+      "**/__tests__/**/*.mjs?(x)",
+      "**/?(*.)+(spec|test).mjs?(x)"
+    ],
+    "moduleFileExtensions": [
+      "mjs",
+      "js"
+    ]
+  }
+}

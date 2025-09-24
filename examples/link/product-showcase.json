@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "type": "link",
+  "title": "UltraBook Pro 15\" - Professional Laptop for Creators",
+  "author_name": "TechGear Reviews",
+  "author_url": "https://mybusiness.com/brands/techgear-reviews",
+  "provider_name": "Creative Studio Pro",
+  "provider_url": "https://mybusiness.com",
+  "cache_age": 43200,
+  "thumbnail_url": "https://cdn.mybusiness.com/products/ultrabook-pro-hero.jpg",
+  "thumbnail_width": 1200,
+  "thumbnail_height": 630,
+  "description": "Discover the UltraBook Pro 15\" - featuring M2 chip, 32GB RAM, and stunning Retina display. Perfect for video editing, design work, and professional development. Now with 20% off limited-time offer.",
+  "product_info": {
+    "price": "$2,399.00",
+    "original_price": "$2,999.00",
+    "discount": "20%",
+    "rating": 4.8,
+    "review_count": 1247,
+    "availability": "In Stock",
+    "shipping": "Free 2-day shipping"
+  },
+  "key_features": [
+    "M2 Pro chip with 12-core CPU",
+    "32GB unified memory",
+    "15.3\" Liquid Retina XDR display",
+    "1TB SSD storage",
+    "22-hour battery life",
+    "Professional-grade cameras"
+  ],
+  "social_proof": {
+    "verified_purchases": 1247,
+    "expert_reviews": 15,
+    "awards": ["Best Laptop 2024", "Editor's Choice", "Innovation Award"]
+  }
+}

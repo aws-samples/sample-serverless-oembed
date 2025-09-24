@@ -1,0 +1,8 @@
+{
+    "Parameters": {
+        "ENVIRONMENT": "dev",
+        "PROVIDER_NAME": "MyBusiness",
+        "PROVIDER_URL": "https://mybusiness.com",
+        "PROVIDER_DOMAIN": "mybusiness.com"
+    }
+}

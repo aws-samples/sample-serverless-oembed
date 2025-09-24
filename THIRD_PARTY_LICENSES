@@ -1,0 +1,122 @@
+Serverless oEmbed Provider - Third Party Licenses
+
+This software includes third party software subject to the following copyrights:
+
+================================================================================
+
+AWS SDK for JavaScript v3 and related packages
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Licensed under the Apache License, Version 2.0
+
+Packages:
+- @aws-sdk/client-dynamodb
+- @aws-sdk/lib-dynamodb
+- @aws-crypto/* (all packages)
+- @smithy/* (all packages)
+
+================================================================================
+
+aws-xray-sdk-core
+Copyright Amazon Web Services
+Licensed under the Apache License, Version 2.0
+
+================================================================================
+
+fast-xml-parser
+Copyright (c) 2017 Amit Kumar Gupta
+Licensed under the MIT License
+
+================================================================================
+
+uuid
+Copyright (c) 2010-2020 Robert Kieffer and other contributors
+Licensed under the MIT License
+
+================================================================================
+
+cls-hooked
+Copyright (c) 2013-2016 Forrest L Norvell
+Licensed under the BSD-2-Clause License
+
+================================================================================
+
+emitter-listener
+Copyright (c) 2013-2016 Forrest L Norvell
+Licensed under the BSD-2-Clause License
+
+================================================================================
+
+shimmer
+Copyright (c) 2013-2016 Forrest L Norvell
+Licensed under the BSD-2-Clause License
+
+================================================================================
+
+async-hook-jl
+Copyright (c) 2017 Andreas Madsen
+Licensed under the MIT License
+
+================================================================================
+
+atomic-batcher
+Copyright (c) 2018 Mathias Buus (@mafintosh)
+Licensed under the MIT License
+
+================================================================================
+
+bowser
+Copyright (c) 2015 Dustin Diaz
+Licensed under the MIT License
+
+================================================================================
+
+mnemonist
+Copyright (c) 2017 Guillaume Plique (Yomguithereal)
+Licensed under the MIT License
+
+================================================================================
+
+obliterator
+Copyright (c) 2019 Guillaume Plique (Yomguithereal)
+Licensed under the MIT License
+
+================================================================================
+
+semver
+Copyright (c) Isaac Z. Schlueter and Contributors
+Licensed under the ISC License
+
+================================================================================
+
+stack-chain
+Copyright (c) 2012 Andreas Madsen
+Licensed under the MIT License
+
+================================================================================
+
+strnum
+Copyright (c) 2021 Amit Kumar Gupta
+Licensed under the MIT License
+
+================================================================================
+
+tslib
+Copyright (c) Microsoft Corporation.
+Licensed under the 0BSD License
+
+================================================================================
+
+undici-types
+Copyright (c) Matteo Collina and Undici contributors
+Licensed under the MIT License
+
+================================================================================
+
+@types/* packages
+Copyright (c) Microsoft Corporation.
+Licensed under the MIT License
+
+================================================================================
+
+The full text of these licenses can be found in the respective package directories
+in node_modules/ or at their source repositories.
